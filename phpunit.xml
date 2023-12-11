@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         verbose="true"
+>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+            <exclude>
+                <directory suffix=".php">./src/Extensions/views</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <testsuites>
+
+        <testsuite name="All">
+            <directory suffix="Test.php">./tests</directory>
+        </testsuite>
+
+        <testsuite name="Utility">
+            <directory suffix="Test.php">./tests/Utility</directory>
+        </testsuite>
+
+    </testsuites>
+</phpunit>
