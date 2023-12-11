@@ -1,0 +1,33 @@
+# Packages
+node_modules
+/vendor
+composer.lock
+package-lock.json
+/.phpunit.result.cache
+
+# WordPress
+wp-cli.phar
+/wordpress
+
+# Compiled Source
+*.css.map
+*.js.map
+
+# Logs
+*.log
+
+# OS
+.DS_Store*
+ehthumbs.db
+Thumbs.db
+
+# Server
+.htaccess
+
+# IDE
+.settings
+.project
+.build
+.idea
+.vscode
+.fleet
