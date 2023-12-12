@@ -24,17 +24,23 @@ class Str
      * HTML class names helper
      *
      * @param string|array $defaults
-     * @param null|array $classes
+     * @param null|string|array $classes
      * @param string $failed
      * @return string
      */
-    public static function classNames(string|array $defaults, ?array $classes = null, string $failed = ''): string
+    public static function classNames(string|array $defaults, null|string|array $classes = null, string $failed = ''): string
     {
-        if(!$result = Arr::reduceAllowedStr(is_array($defaults) ? $defaults : $classes)) {
-            $result = !is_array($classes) ? $classes : $failed;
+        $numArgs = func_num_args();
+        $checkList = is_array($defaults) && ($numArgs === 1 || $numArgs === 2) ? $defaults : $classes;
+
+        $result = Arr::reduceAllowedStr($checkList);
+        $classes ??= '';
+
+        if(!$result) {
+            $result = is_string($classes) && $numArgs === 2 ? $classes : $failed;
         }
 
-        $defaults = !is_array($defaults) ? $defaults : '';
+        $defaults = is_string($defaults) ? $defaults : '';
 
         return trim($defaults . ' ' . $result);
     }
@@ -125,15 +131,15 @@ class Str
      *
      * @param string|null $value
      * @param string $separator specify - or _
-     * @param bool $capitalize_first_char define as false if you want camelCase over CamelCase
+     * @param bool $capitalizeFirstChar define as false if you want camelCase over CamelCase
      *
      * @return mixed
      */
-    public static function camelize(?string $value, string $separator = '_', bool $capitalize_first_char = true): mixed
+    public static function camelize(?string $value, string $separator = '_', bool $capitalizeFirstChar = true): mixed
     {
         $str = str_replace($separator, '', ucwords($value ?? '', $separator));
 
-        if (!$capitalize_first_char) {
+        if (!$capitalizeFirstChar) {
             $str = lcfirst($str);
         }
 
@@ -221,6 +227,10 @@ class Str
      */
     public static function replaceLast(string $needle, string $new, string $value)
     {
+        if ($needle === '') {
+            return $value;
+        }
+
         $position = strrpos($value, $needle);
 
         if ($position !== false) {
@@ -298,12 +308,12 @@ class Str
      * Make Words
      *
      * @param string $value
-     * @param bool $uppercase
      * @param string $separator
+     * @param bool $uppercase
      *
      * @return false|string
      */
-    public static function makeWords(string $value, bool $uppercase, string $separator = '_') : false|string
+    public static function makeWords(string $value, string $separator = '_', bool $uppercase = false) : false|string
     {
         $words = str_replace($separator, ' ', $value);
         return $uppercase ? static::uppercaseWords($words) : $words;

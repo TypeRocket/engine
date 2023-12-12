@@ -54,7 +54,10 @@ class StrTest extends TestCase
         $root = trim('/root-folder/new-path/', '/');
         $trimmed = Str::removeStart('root-folder/new-path/nested',  $root);
 
-        $this->assertTrue( ltrim( $trimmed, '/') == 'nested' );
+        $this->assertTrue( ltrim( $trimmed, '/') === 'nested' );
+
+        $this->assertTrue( Str::removeStart( 'one-two', 'two') === 'one-two' );
+
     }
 
     public function testSnake()
@@ -139,4 +142,117 @@ class StrTest extends TestCase
         $this->assertTrue( Str::reverse("\u{ff41}z0") === "0z\u{ff41}");
         $this->assertTrue( Str::reverse("🚀 \u{ff41}z0") === "0z\u{ff41} 🚀");
     }
+
+    public function testCamelize()
+    {
+        $this->assertTrue( Str::camelize('some_value') === 'SomeValue' );
+        $this->assertTrue( Str::camelize('some_value', '_', false) === 'someValue' );
+    }
+
+    public function testUppercaseWords()
+    {
+        $this->assertTrue( Str::uppercaseWords('some_value') === 'Some_Value' );
+        $this->assertTrue( Str::uppercaseWords('some value') === 'Some Value' );
+    }
+
+    // classNames
+    public function testClassNames()
+    {
+        $this->assertTrue( Str::classNames('some_value', [
+                'one' => true,
+                'two' => false
+        ]) === 'some_value one' );
+
+        $v = Str::classNames('some_value', [
+            'one' => false,
+            'two' => false
+        ], 'three');
+
+        $this->assertTrue( $v === 'some_value three' );
+
+        $this->assertTrue( Str::classNames([
+            'one' => false,
+            'two' => false,
+            'three' => false,
+        ]) === '' );
+
+        $this->assertTrue( Str::classNames([
+            'one' => false,
+            'two' => false
+        ], null) === '' );
+
+        $this->assertTrue( Str::classNames([
+            'one' => false,
+            'two' => false
+        ], 'three') === 'three' );
+
+        $this->assertTrue( Str::classNames([
+            'one' => true,
+            'two' => false
+        ]) === 'one' );
+    }
+
+    // replaceFirstRegex
+    public function testReplaceFirstRegex()
+    {
+        $this->assertTrue( Str::replaceFirstRegex('123', '789', '123/456') === '789/456');
+        $this->assertTrue( Str::replaceFirstRegex('/12\d{1}/', '789', '123/456', false) === '789/456');
+    }
+
+    // replaceFirst
+    public function testReplaceFirst()
+    {
+        $this->assertTrue( Str::replaceFirst('one', 'two', 'three one one') === 'three two one');
+        $this->assertTrue( Str::replaceFirst('two', 'one', 'three one one') === 'three one one');
+        $this->assertTrue( Str::replaceFirst('', 'one', 'three one one') === 'three one one');
+    }
+
+    // replaceLast
+    public function testReplaceLast()
+    {
+        $this->assertTrue( Str::replaceLast('two', 'one', 'three two two' ) === 'three two one');
+        $this->assertTrue( Str::replaceLast('one', 'two', 'three two two' ) === 'three two two');
+        $this->assertTrue( Str::replaceLast('', 'two', 'three two two' ) === 'three two two');
+    }
+
+    // pregMatchFindFirst
+    public function testPregMatchFindFirst()
+    {
+        $this->assertTrue( Str::pregMatchFindFirst([
+            'one/2/three',
+            'one/\d+/three',
+            'one/two/three',
+        ], 'one/2/three') === 'one/2/three');
+
+        $this->assertTrue( Str::pregMatchFindFirst([
+            'one/2/three',
+            'one/\d+/three',
+            'one/two/three',
+        ], 'one/zero/three') === null);
+
+        $this->assertTrue( Str::pregMatchFindFirst([
+            'one/2/three',
+            'one/\d+/three',
+            'one/two/three',
+        ], 'one/two/three') === 'one/two/three');
+    }
+
+    // splitAt
+    public function testSplitAt()
+    {
+        $v = Str::splitAt(' t', 'one two two');
+        $this->assertTrue( $v === ['one', 'wo two']);
+
+        $v = Str::splitAt(' t', 'one two two', true);
+        $this->assertTrue( $v === ['one two', 'wo']);
+    }
+
+    // makeWords
+    public function testMakeWords()
+    {
+        $this->assertTrue( Str::makeWords('one_two') === 'one two');
+        $this->assertTrue( Str::makeWords('one-two', '-') === 'one two');
+        $this->assertTrue( Str::makeWords('one-two', '-', true) === 'One Two');
+    }
+
 }
