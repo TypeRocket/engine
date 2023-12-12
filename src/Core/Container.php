@@ -98,13 +98,26 @@ class Container
      *
      * @return array
      */
-    public function aliases() : array
+    public static function aliases() : array
     {
         return self::$alias;
     }
 
     /**
-     * Resolve Singleton
+     * Alias Exists
+     *
+     * @param string $alias
+     * @return bool
+     */
+    public static function aliasExists(string $alias) : bool
+    {
+        return !empty(self::$alias[$alias]);
+    }
+
+    /**
+     * Find Or New Singleton
+     *
+     * Does not work on classes with a constructor
      *
      * @param string $class
      * @param null|string $alias
