@@ -4,6 +4,8 @@ node_modules
 composer.lock
 package-lock.json
 /.phpunit.result.cache
+/phpunit.xml.bak
+/.phpunit.cache
 
 # WordPress
 wp-cli.phar
