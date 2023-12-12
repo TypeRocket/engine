@@ -4,19 +4,16 @@ declare(strict_types=1);
 namespace Core;
 
 use PHPUnit\Framework\TestCase;
-use TypeRocket\Core\Resolver;
-use TypeRocket\Models\Model;
+use TypeRocket\Engine7\Core\Resolver;
 
 class ForResolverTestClass {
 
     public function __construct(
         ?TestCase $test,
-        ?Model $model = null,
         array $array = [],
         string $str = 'text'
     )
     {
-        $test->assertInstanceOf(Model::class, $model);
         $test->assertIsArray($array);
         $test->assertIsString($str);
     }

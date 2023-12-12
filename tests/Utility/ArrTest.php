@@ -1,13 +1,10 @@
 <?php
 namespace Utility;
 
-use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
-use JetBrains\PhpStorm\Internal\TentativeType;
 use PHPUnit\Framework\TestCase;
-use TypeRocket\Utility\Arr;
-use TypeRocket\Utility\Traits\ArrayAccessible;
-use TypeRocket\Utility\Traits\ArrayIterable;
-use YoastSEO_Vendor\League\OAuth2\Client\Tool\ArrayAccessorTrait;
+use TypeRocket\Engine7\Utility\Arr;
+use TypeRocket\Engine7\Utility\Traits\ArrayAccessible;
+use TypeRocket\Engine7\Utility\Traits\ArrayIterable;
 
 class ArrTest extends TestCase
 {
@@ -218,7 +215,7 @@ class ArrTest extends TestCase
     {
         $class = new class implements \ArrayAccess, \Iterator {
 
-            use ArrayAccessible, ArrayIterable;
+            use \TypeRocket\Engine7\Utility\Traits\ArrayIterable, \TypeRocket\Engine7\Utility\Traits\ArrayAccessible;
 
             protected array $storage = [];
             protected string $_location = 'storage';

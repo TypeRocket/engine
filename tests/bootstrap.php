@@ -1,10 +1,11 @@
 <?php
-if(file_exists(__DIR__.'/../vendor/autoload.php')) {
-    require_once __DIR__.'/../vendor/autoload.php';
-}
 
-if(file_exists(__DIR__.'/../../../vendor/autoload.php')) {
-    require_once __DIR__.'/../vendor/autoload.php';
+$autoloader_test__suite = realpath(__DIR__.'/../vendor/autoload.php');
+
+if(file_exists($autoloader_test__suite)) {
+    require_once $autoloader_test__suite;
+} else {
+    throw new \Error('Autoloader in vendor folder not found.');
 }
 
 date_default_timezone_set('UTC');
@@ -28,7 +29,7 @@ function getWordpressPath()
     $fileToCheck = 'wp-settings.php';
     $paths = [];
 
-    foreach (range(1, 8) as $level) {
+    foreach (range(1, 10) as $level) {
         $nested = str_repeat('/..', $level);
         array_push($paths, __DIR__ . "$nested/wordpress/$fileToCheck", __DIR__ . "$nested/$fileToCheck");
     }
@@ -54,15 +55,6 @@ if( ! file_exists($wp_load) ) {
 
 
     function __test_false() { return false; }
-    define('TYPEROCKET_AUTO_LOADER', '__test_false');
-    $typerocket_init_root = realpath(__DIR__ . '/../../../../init.php');
-    $typerocket_init_tests = realpath(__DIR__ . '/../typerocket/init.php');
-
-    if( file_exists($typerocket_init_tests) ) {
-        require $typerocket_init_tests;
-    } elseif(file_exists( $typerocket_init_root)) {
-        require $typerocket_init_root;
-    }
 
     if(! defined( 'ABSPATH' )) {
         require BASE_WP . '/wp-load.php';
