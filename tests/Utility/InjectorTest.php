@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace Utility;
 
 use PHPUnit\Framework\TestCase;
-use TypeRocket\Core\Container;
-use TypeRocket\Http\ApplicationRoutes;
-use TypeRocket\Http\Response;
-use TypeRocket\Http\RouteCollection;
+use TypeRocket\Engine7\Core\Container;
 
 class InjectorTest extends TestCase
 {
@@ -15,23 +12,14 @@ class InjectorTest extends TestCase
     public function testRegisterAndDestroy()
     {
 
-        Container::register('test.response.404', function () {
-            $response = new Response();
-            $response->setStatus(404);
-
-            return $response;
+        Container::register('php.stdClass', function () {
+            $obj = new \stdClass();
+            $obj->test = 1;
+            return $obj;
         }, true);
 
-        $response = Container::resolve('test.response.404');
+        $obj = Container::resolve('php.stdClass');
 
-        $this->assertTrue( $response->getStatus() == 404 );
+        $this->assertTrue( $obj->test === 1 );
     }
-
-    public function testInjectorHelper()
-    {
-        $routes = \TypeRocket\Core\Container::resolveAlias('routes');
-
-        $this->assertTrue($routes instanceof RouteCollection);
-    }
-
 }

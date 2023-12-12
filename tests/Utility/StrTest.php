@@ -4,40 +4,40 @@ declare(strict_types=1);
 namespace Utility;
 
 use PHPUnit\Framework\TestCase;
-use TypeRocket\Utility\Str;
+use TypeRocket\Engine7\Utility\Str;
 
 class StrTest extends TestCase
 {
     public function testStarts()
     {
-        $this->assertTrue( Str::starts('typerocket', 'typerocket, is the name of the game.') );
+        $this->assertTrue( Str::starts('typerocket, is the name of the game.', 'typerocket') );
     }
 
     public function testStartsBlank()
     {
-        $this->assertTrue( Str::starts('', 'typerocket, is the name of the game.') );
+        $this->assertTrue( Str::starts('typerocket, is the name of the game.', '') );
     }
 
     public function testEnds()
     {
-        $this->assertTrue( Str::ends('typerocket?', 'is the name of the game typerocket?') );
-        $this->assertTrue( Str::ends('game ' . PHP_EOL, 'is the name of the game ' . PHP_EOL) );
+        $this->assertTrue( Str::ends('is the name of the game typerocket?', 'typerocket?') );
+        $this->assertTrue( Str::ends('is the name of the game ' . PHP_EOL, 'game ' . PHP_EOL) );
     }
 
     public function testEndsBlank()
     {
-        $this->assertTrue( Str::ends('', 'is the name of the game typerocket?') );
+        $this->assertTrue( Str::ends('is the name of the game typerocket?', '') );
     }
 
     public function testContains()
     {
-        $this->assertTrue( Str::contains('typerocket is!', 'What is the name of the game? typerocket is!') );
-        $this->assertTrue( Str::contains('name of the game', 'What is the name of the game? typerocket is!') );
+        $this->assertTrue( Str::contains('What is the name of the game? typerocket is!', 'typerocket is!') );
+        $this->assertTrue( Str::contains('What is the name of the game? typerocket is!', 'name of the game') );
     }
 
     public function testContainsBlank()
     {
-        $this->assertTrue( Str::contains('', 'What is the name of the game? typerocket is!') );
+        $this->assertTrue( Str::contains('What is the name of the game? typerocket is!', '') );
     }
 
     public function testExplodeRight()
@@ -49,10 +49,10 @@ class StrTest extends TestCase
 
     public function testRemoveStartsWith()
     {
-        $this->assertTrue( Str::trimStart('root-folder/new-path', 'root-folder') == '/new-path' );
+        $this->assertTrue( Str::removeStart('root-folder/new-path', 'root-folder') == '/new-path' );
 
         $root = trim('/root-folder/new-path/', '/');
-        $trimmed = Str::trimStart('root-folder/new-path/nested',  $root);
+        $trimmed = Str::removeStart('root-folder/new-path/nested',  $root);
 
         $this->assertTrue( ltrim( $trimmed, '/') == 'nested' );
     }
@@ -73,8 +73,6 @@ class StrTest extends TestCase
 
         $this->assertTrue( Str::blank(null) === true );
         $this->assertTrue( Str::notBlank(null) === false );
-
-        $this->assertTrue( Str::notBlank([]) === true );
     }
 
     public function testQuiet()

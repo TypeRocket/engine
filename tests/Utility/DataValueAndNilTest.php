@@ -2,9 +2,8 @@
 namespace TypeRocket\tests\Utility;
 
 use PHPUnit\Framework\TestCase;
-use TypeRocket\Utility\Data;
-use TypeRocket\Utility\Nil;
-use TypeRocket\Utility\Value;
+use TypeRocket\Engine7\Utility\Data;
+use TypeRocket\Engine7\Utility\Nil;
 
 class DataValueAndNilTest extends TestCase
 {
@@ -13,13 +12,13 @@ class DataValueAndNilTest extends TestCase
         $obj = new \stdClass();
         $obj->one = new \stdClass();
         $obj->one->two = new \stdClass();
-        $null = Value::nils($obj)->one->two->three->get() ?? null;
+        $null = Data::nil($obj)->one->two->three->get() ?? null;
 
         $this->assertTrue(is_null($null));
-        $this->assertTrue(Value::nils($obj->one)->two->three->four instanceof Nil);
-        $this->assertTrue(isset(Value::nils($obj->one)->two));
-        $this->assertTrue(!isset(Value::nils($obj->one->two)->three));
-        $this->assertTrue(!isset(Value::nils($obj->one->two)->three->four));
+        $this->assertTrue(Data::nil($obj->one)->two->three->four instanceof Nil);
+        $this->assertTrue(isset(Data::nil($obj->one)->two));
+        $this->assertTrue(!isset(Data::nil($obj->one->two)->three));
+        $this->assertTrue(!isset(Data::nil($obj->one->two)->three->four));
     }
 
     public function testDataNil()
@@ -30,10 +29,10 @@ class DataValueAndNilTest extends TestCase
         $null = Data::nil($obj)->one->two->three->get() ?? null;
 
         $this->assertTrue(is_null($null));
-        $this->assertTrue(Value::nils($obj->one)->two->three->four instanceof Nil);
-        $this->assertTrue(isset(Value::nils($obj->one)->two));
-        $this->assertTrue(!isset(Value::nils($obj->one->two)->three));
-        $this->assertTrue(!isset(Value::nils($obj->one->two)->three->four));
+        $this->assertTrue(Data::nil($obj->one)->two->three->four instanceof Nil);
+        $this->assertTrue(isset(Data::nil($obj->one)->two));
+        $this->assertTrue(!isset(Data::nil($obj->one->two)->three));
+        $this->assertTrue(!isset(Data::nil($obj->one->two)->three->four));
     }
 
     public function testNilArray()
@@ -41,9 +40,9 @@ class DataValueAndNilTest extends TestCase
         $arr = [];
         $arr['one'] = [];
         $arr['one']['two'] = [true];
-        $this->assertTrue(Value::nils(Value::nils($arr['one'])['two'])['three']['four'] instanceof Nil);
-        $this->assertTrue(isset(Value::nils($arr['one'])['two']));
-        $this->assertTrue(!isset(Value::nils($arr['one']['two'])['three']['four']));
+        $this->assertTrue(Data::nil(Data::nil($arr['one'])['two'])['three']['four'] instanceof Nil);
+        $this->assertTrue(isset(Data::nil($arr['one'])['two']));
+        $this->assertTrue(!isset(Data::nil($arr['one']['two'])['three']['four']));
     }
 
     public function testNilCombo()
@@ -52,9 +51,9 @@ class DataValueAndNilTest extends TestCase
         $arr['one'] = [];
         $arr['one']['two'] = [true];
 
-        $this->assertTrue(Value::nils(Value::nils($arr['one'])['two'])->three['four'] instanceof Nil);
-        $this->assertTrue(isset(Value::nils($arr['one'])->two));
-        $this->assertTrue(!isset(Value::nils($arr['one']['two'])['three']->four));
+        $this->assertTrue(Data::nil(Data::nil($arr['one'])['two'])->three['four'] instanceof Nil);
+        $this->assertTrue(isset(Data::nil($arr['one'])->two));
+        $this->assertTrue(!isset(Data::nil($arr['one']['two'])['three']->four));
     }
 
     public function testNilHelper()
@@ -63,10 +62,10 @@ class DataValueAndNilTest extends TestCase
         $arr['one'] = [];
         $arr['one']['two'] = [true];
 
-        $this->assertTrue(Value::nils(Value::nils($arr['one'])['two'])->three['four'] instanceof Nil);
-        $this->assertTrue(Value::nils(Value::nils($arr['one'])['two'])->three['four']->get() === null);
-        $this->assertTrue(isset(Value::nils($arr)['one']->two));
-        $this->assertTrue(!isset(Value::nils($arr['one']['two'])['three']['four']));
+        $this->assertTrue(Data::nil(Data::nil($arr['one'])['two'])->three['four'] instanceof Nil);
+        $this->assertTrue(Data::nil(Data::nil($arr['one'])['two'])->three['four']->get() === null);
+        $this->assertTrue(isset(Data::nil($arr)['one']->two));
+        $this->assertTrue(!isset(Data::nil($arr['one']['two'])['three']['four']));
     }
 
     public function testDataWalkBasic()
