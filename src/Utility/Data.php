@@ -150,7 +150,13 @@ class Data
                     return static::walk($traverse, $item, $default);
                 }, $array);
             } else {
-                $v = is_object($array) ? ($array->$step ?? null) : ($array[$step] ?? null);
+                if (is_object($array)) {
+                    $v = ($array->$step ?? null);
+                } elseif(is_array($array)) {
+                    $v = ($array[$step] ?? null);
+                } else {
+                    return $default;
+                }
             }
 
             if ( !isset($v) && ! is_string($array) ) {
@@ -226,7 +232,7 @@ class Data
             $key = is_object($item) ? ($item->$index ?? null) : ($item[$index] ?? null);
 
             if($unique && array_key_exists($key, $indexed_list)) {
-                throw new \Exception("Array key must be unique for Data::createMapIndexBy(): {$key} already taken.");
+                throw new \Exception("Index key must be unique for Data::createMapIndexBy(): {$key} already taken.");
             }
 
             $indexed_list[$key] = $item;
@@ -310,8 +316,6 @@ class Data
                 $value = unserialize($value);
             } elseif(!is_string($value)) {
                 $value = (array) $value;
-            } elseif (trim($value) === '""') {
-                $value = null;
             }
 
             return $value;
@@ -327,8 +331,6 @@ class Data
                 $value = (object) unserialize($value);
             } elseif(!is_string($value)) {
                 $value = (object) $value;
-            } elseif (trim($value) === '""') {
-                $value = null;
             }
 
             return $value;

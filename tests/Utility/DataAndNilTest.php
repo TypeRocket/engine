@@ -5,6 +5,7 @@ use PHPUnit\Framework\TestCase;
 use TypeRocket\Engine7\Utility\Data;
 use TypeRocket\Engine7\Utility\Nil;
 use stdClass;
+use TypeRocket\Engine7\Utility\Arr;
 
 class DataAndNilTest extends TestCase
 {
@@ -92,6 +93,42 @@ class DataAndNilTest extends TestCase
         $v = Data::walk('one.two', $data);
 
         $this->assertTrue($v === 'hi');
+    }
+
+    public function testDataWalkMissing()
+    {
+        $data = [
+            'one' => ['two' => 'hi' ]
+        ];
+
+        $v = Data::walk('one.two.0', $data);
+
+        $this->assertTrue($v === null);
+    }
+
+    public function testDataWalkObject()
+    {
+        $class = new \stdClass();
+        $class->two = 2;
+
+        $data = [
+            'one' => $class
+        ];
+
+        $v = Data::walk('one.two', $data);
+
+        $this->assertTrue($v === 2);
+    }
+
+    public function testDataWalkToNull()
+    {
+        $data = [
+            'one' => ['two' => null ]
+        ];
+
+        $v = Data::walk('one.two', $data, 'one');
+
+        $this->assertTrue($v === 'one');
     }
 
     public function testDataWalkDeep()
@@ -227,6 +264,38 @@ class DataAndNilTest extends TestCase
         $this->assertTrue(! Data::emptyOrBlankRecursive([0,[null,[null]]])); // emptyOrBlankRecursive sees 0 integers
         $this->assertTrue(! Data::emptyOrBlankRecursive([0.0,[null,[null]]])); // emptyOrBlankRecursive sees 0.0 floats
         $this->assertTrue(! Data::emptyOrBlankRecursive([[['one']]]));
+    }
+
+    public function testCastingNoneType()
+    {
+        $types = [
+            'none',
+            '',
+        ];
+
+        $values = [
+            json_encode([]),
+            serialize([]),
+            null,
+            false,
+            true,
+            [],
+            '',
+            new stdClass(),
+            1,
+            0,
+            33,
+            '33',
+            '1',
+            'abc',
+        ];
+
+        foreach ($values as $v) {
+            foreach($types as $t) {
+                $c = Data::cast($v, $t);
+                $this->assertTrue($v === $c);
+            }
+        }
     }
 
     public function testCastingFloat()
@@ -520,5 +589,45 @@ class DataAndNilTest extends TestCase
                 $this->assertTrue(is_int($int));
             }
         }
+    }
+
+    public function testDataCreateMapIndexByTypeError()
+    {
+        $data = [
+            'kevin',
+            ['name' => 'kim'],
+            ['name' => 'jim'],
+        ];
+
+        try {
+            $v = Data::createMapIndexBy('name', $data);
+        } catch (\Exception $e) {
+            $this->assertTrue($e->getMessage() === 'Nested array or object required for Data::createMapIndexBy(): string is not valid.');
+        }
+    }
+
+    public function testDataCreateMapIndexByUniqueError()
+    {
+        $data = [
+            ['name' => 'kim'],
+            ['name' => 'kim'],
+        ];
+
+        try {
+            $v = Data::createMapIndexBy('name', $data);
+        } catch (\Exception $e) {
+            $this->assertTrue($e->getMessage() === 'Index key must be unique for Data::createMapIndexBy(): kim already taken.');
+        }
+    }
+
+    public function testDataCreateMapIndexBy()
+    {
+        $data = [
+            ['name' => 'kim'],
+            ['name' => 'jim'],
+        ];
+
+        $v = Data::createMapIndexBy('name', $data);
+        $this->assertTrue($v['kim'] === ['name' => 'kim']);
     }
 }
