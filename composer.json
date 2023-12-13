@@ -24,9 +24,7 @@
         "phpunit/phpunit": "^10.5"
     },
     "autoload": {
-        "psr-4": {
-            "TypeRocket\\Engine7\\": "src/"
-        }
+        "files": ["loader.php"]
     },
     "minimum-stability": "stable"
 }

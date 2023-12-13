@@ -2,15 +2,16 @@
 /**
  * Register TypeRocket Engine7
  *
- * 1. Install TypeRocket Engine7 with composer but do not include the composer autoload.php file.
+ * Install with composer using its autoload.php file:
+ *
+ * include __DIR__ . '/vendor/autoload.php';
+ *
+ * Or, the below steps:
+ *
+ * 1. Download TypeRocket Engine7 into your project.
  * 2. Include this file in your plugin.
- * 3. Add your TypeRocket code to the action hook typerocket_engine7_loaded
  *
- * include __DIR__ . '/vendor/typerocket/engine/loader.php';
- *
- * add_action('typerocket_engine7_loaded', function() {
- *   // Your code here
- * });
+ * include __DIR__ . '/{your_downloaded_folder_name}/loader.php';
  */
 if(!function_exists('typerocket_engine7_register')) {
     function typerocket_engine7_register(?string $version = null, ?string $location = null) {
@@ -34,9 +35,13 @@ if(!function_exists('typerocket_engine7_register')) {
     }
 
     add_action('after_setup_theme', function() {
-        [$number, $directory] = typerocket_engine7_register();
-        require_once $directory . '/vendor/autoload.php';
-        require_once $directory . '/init.php';
+        [$typerocket_number, $typerocket_directory] = typerocket_engine7_register();
+        $typerocket_autoload_map = [
+            'prefix' => 'TypeRocket\\Engine7\\',
+            'folder' => $typerocket_directory . '\vendor\typerocket\engine'
+        ];
+
+        require_once $typerocket_directory . '/init.php';
     });
 }
 
