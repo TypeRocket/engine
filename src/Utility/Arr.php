@@ -22,14 +22,21 @@ class Arr
      * Filter Null Values Only
      *
      * @param array $array
+     * @param bool $reindex
      *
      * @return array
      */
-    public static function filterNull(array $array) : array
+    public static function filterNull(array $array, bool $reindex = false) : array
     {
-        return array_filter($array, function($v, $k) {
+        $v = array_filter($array, function($v) {
             return !is_null($v);
-        }, ARRAY_FILTER_USE_BOTH);
+        });
+
+        if($reindex) {
+            return array_merge($v);
+        }
+
+        return $v;
     }
 
     /**
@@ -93,20 +100,6 @@ class Arr
         }
 
         return $list;
-    }
-
-    /**
-     * Maps a function to all non-iterable elements of an array or an object.
-     *
-     * This is similar to `array_walk_recursive()` but acts upon objects too.
-     *
-     * @param callable $callback The function to map onto $value.
-     * @param mixed $value The array, object, or scalar.
-     * @return mixed The value with the callback applied to all non-arrays and non-objects inside it.
-     */
-    public static function mapDeep(callable $callback, mixed $value): mixed
-    {
-        return Data::mapDeep($callback, $value);
     }
 
     /**
@@ -350,11 +343,15 @@ class Arr
                 $new_loc = &$loc;
                 $indies = array_keys($new_loc);
                 foreach($indies as $index) {
-                    if(isset($new_loc[$index])) {
+                    if(isset($new_loc[$index]) && static::isAccessible($new_loc[$index])) {
                         static::format($search, $new_loc[$index], $callback);
+                    } elseif(isset($new_loc[$index])) {
+                        $v = $callback($new_loc[$index]);
+                        $loc[$index] = &$v;
                     }
                 }
-            } elseif( isset($loc[$step] ) ) {
+            }
+            elseif( isset($loc[$step] ) ) {
                 $loc = &$loc[$step];
             } else {
                 return null;
@@ -362,7 +359,7 @@ class Arr
         }
 
         if(!isset($indies) && is_callable($callback)) {
-            $loc = call_user_func($callback, $loc);
+            $loc = $callback($loc);
         }
 
         return $loc;

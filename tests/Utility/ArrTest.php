@@ -3,6 +3,7 @@ namespace Utility;
 
 use PHPUnit\Framework\TestCase;
 use TypeRocket\Engine7\Utility\Arr;
+use TypeRocket\Engine7\Utility\Data;
 use TypeRocket\Engine7\Utility\Traits\ArrayAccessible;
 use TypeRocket\Engine7\Utility\Traits\ArrayIterable;
 
@@ -109,6 +110,19 @@ class ArrTest extends TestCase
         $this->assertTrue(array_key_exists('kim', $v) && $v['kim'] === 'kim');
     }
 
+    public function testPluckSimpleNoIndex()
+    {
+        $data = [
+            ['name' => 'jim'],
+            ['name' => 'kim'],
+            ['name' => 'kim'],
+        ];
+
+        $v = Arr::pluck($data, 'name');
+
+        $this->assertTrue($v === ['jim','kim','kim']);
+    }
+
     public function testPluckComplex()
     {
         $data = [
@@ -121,6 +135,21 @@ class ArrTest extends TestCase
 
         $this->assertTrue(array_key_exists('2', $v) && $v[2]['meta']['job'] === 'dev');
         $this->assertTrue(($v[2]['name'] ?? null) === null);
+    }
+
+    public function testPluckUniqueError()
+    {
+        $data = [
+            ['name' => 'jim'],
+            ['name' => 'kat'],
+            ['name' => 'kat'],
+        ];
+
+        try {
+            $v = Arr::pluck($data, 'name', 'name');
+        } catch (\Exception $e) {
+            $this->assertTrue($e->getMessage() === 'Array key must be unique for Arr::pluck with index.');
+        }
     }
 
     public function testIndexByFailSameKey()
@@ -456,5 +485,81 @@ class ArrTest extends TestCase
         $new = Arr::set('one.three', $array, null);
 
         $this->assertTrue($new['one']['three'] === null);
+    }
+
+    public function testArrayFilterNull()
+    {
+        $v = Arr::filterNull([
+            null,
+            'one'
+        ]);
+
+        $indexed = Arr::filterNull([
+            null,
+            'one'
+        ], true);
+
+        $this->assertTrue($v === [1 => 'one']);
+        $this->assertTrue($indexed === ['one']);
+    }
+
+    public function testArrayMeld()
+    {
+        $v = Arr::meld(['one' => ['two' => 3]]);
+
+        $this->assertTrue($v['one.two'] === 3);
+    }
+
+    public function testArrayFormatSearchHead()
+    {
+        $array = ['one' => [
+            'two' => 3, 'three' => 3
+        ]];
+
+        Arr::format('one.*', $array, fn($v) => $v * 2);
+
+        $this->assertTrue($array['one']['two'] === 6);
+        $this->assertTrue($array['one']['three'] === 6);
+    }
+
+    public function testArrayFormat()
+    {
+        $array = ['one' => [
+            'two' => 3, 'three' => 3
+        ]];
+
+        Arr::format('one.two', $array, fn($v) => $v * 2);
+
+        $this->assertTrue($array['one']['two'] === 6);
+    }
+
+    public function testArrayFormatSearch()
+    {
+        $array = ['one' => [
+            'two' => [3], 'three' => [3]
+        ]];
+
+        Arr::format('one.*.0', $array, fn($v) => $v * 2);
+        Arr::format('one.three.0', $array, fn($v) => $v * 2);
+
+        $this->assertTrue($array['one']['two'][0] === 6);
+        $this->assertTrue($array['one']['three'][0] === 12);
+    }
+
+    public function testArrayDivide()
+    {
+        $this->assertTrue(Arr::divide(['me' => 'you']) === [['me'],['you']]);
+    }
+
+    public function testArrayPartition()
+    {
+        $g = Arr::partition([1,2,3,4,5,6,7], 3);
+        $this->assertTrue($g === [[1,2,3],[4,5],[6,7]]);
+    }
+
+    public function testArrayKeysExist()
+    {
+        $this->assertTrue(Arr::keysExist(['one', 'two'], ['one' => null, 'two' => 2]));
+        $this->assertTrue(! Arr::keysExist(['one', 'three'], ['one' => null, 'two' => 2]));
     }
 }
