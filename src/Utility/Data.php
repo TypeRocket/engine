@@ -80,6 +80,8 @@ class Data
     }
 
     /**
+     * Is value or array empty
+     *
      * @param mixed $value
      *
      * @return bool
@@ -98,6 +100,10 @@ class Data
     }
 
     /**
+     * Is value or array empty
+     *
+     * Sees 0 integers and 0.0 floats as not empty.
+     *
      * @param mixed $value
      *
      * @return bool
@@ -107,15 +113,15 @@ class Data
         if (is_array($value)) {
             $empty = true;
             array_walk_recursive($value, function($item) use (&$empty) {
-                if(is_string($item) || is_int($item)) {
-                    $empty = !Str::notBlank($item);
+                if(is_string($item) || is_int($item) || is_float($item)) {
+                    $empty = Str::blank($item);
                 } else {
                     $empty = $empty && empty($item);
                 }
             });
         } else {
-            if(is_string($value)|| is_int($value)) {
-                $empty = !Str::notBlank($value);
+            if(is_string($value) || is_int($value) || is_float($value)) {
+                $empty = Str::blank($value);
             } else {
                 $empty = empty($value);
             }
@@ -304,7 +310,7 @@ class Data
                 $value = unserialize($value);
             } elseif(!is_string($value)) {
                 $value = (array) $value;
-            } elseif (trim($value) == '""') {
+            } elseif (trim($value) === '""') {
                 $value = null;
             }
 
@@ -321,7 +327,7 @@ class Data
                 $value = (object) unserialize($value);
             } elseif(!is_string($value)) {
                 $value = (object) $value;
-            } elseif (trim($value) == '""') {
+            } elseif (trim($value) === '""') {
                 $value = null;
             }
 
