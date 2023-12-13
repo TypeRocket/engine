@@ -6,6 +6,7 @@ namespace Core;
 use PHPUnit\Framework\TestCase;
 use TypeRocket\Engine7\Core\Container;
 use TypeRocket\Engine7\Core\Resolver;
+use TypeRocket\Engine7\Interfaces\ResolvesWith;
 
 class ResolverAndContainerTest extends TestCase
 {
@@ -93,6 +94,74 @@ class ResolverAndContainerTest extends TestCase
             'string',
             false
         ]);
+
+        $c = new class {
+            public function method($test, $array, $int, $string, $bool, $null = null)
+            {
+                $test->assertIsArray($array);
+                $test->assertIsInt($int);
+                $test->assertIsString($string);
+                $test->assertIsBool($bool);
+                $test->assertTrue(is_null($null));
+            }
+
+            public function onDependencyInjection()
+            {
+
+            }
+        };
+
+        Resolver::new()->resolveCallable([$c, 'method'], [
+            '@first' => $this,
+            'array' => [1,2,3],
+            'int' => 1,
+            'string' => 'text',
+            'bool' => false,
+        ]);
+    }
+
+    public function testResolverBuild()
+    {
+        $c = Resolver::build(ForResolverTestClass::class, [$this]);
+
+        $this->assertIsArray($c->array);
+    }
+
+    public function testResolverOnDependencyInjection()
+    {
+        Resolver::new()->resolveCallable([new ForResolverTestClassDependencyInjection, 'method'], [
+            $this,
+            'me'
+        ]);
+    }
+
+    public function testResolverNonClass()
+    {
+        try {
+            Resolver::build(ForResolverTestClassAbstract::class);
+        } catch (\Exception $exception) {
+            $this->assertTrue($exception->getMessage() === 'Core\ForResolverTestClassAbstract is not instantiable');
+        }
+    }
+
+    public function testResolverResolvesWith()
+    {
+        Resolver::build(ForResolverTestClassResolvesWith::class)->method($this);
+    }
+
+    public function testResolverNonDefaultValue()
+    {
+        try {
+            $c = new class {
+                public function method($test, $array){}
+            };
+
+            Resolver::new()->resolveCallable([$c, 'method'], [
+                '@first' => $this,
+            ]);
+        } catch (\Exception $exception) {
+            $this->assertTrue($exception->getMessage() === 'Resolver failed because there is no default value for the parameter: $array');
+        }
     }
 }
 
@@ -111,3 +180,45 @@ class ForResolverTestClass {
 }
 
 class ForResolverTestClassFindOrNewSingleton {}
+abstract class ForResolverTestClassAbstract {}
+
+class ForResolverTestClassDependencyInjection {
+
+    public string $name = 'you';
+
+    public function method($test, ForResolverTestClassDependencyInjection $that): void
+    {
+        $test->assertTrue($that->name === 'me');
+    }
+
+    public function onDependencyInjection($v): mixed
+    {
+        $this->name = $v;
+
+        return $this;
+    }
+
+    public function onResolution(): static
+    {
+        $this->name = 'them';
+
+        return $this;
+    }
+};
+
+class ForResolverTestClassResolvesWith implements ResolvesWith {
+
+    public string $name = 'you';
+
+    public function method($test): void
+    {
+        $test->assertTrue($this->name === 'them');
+    }
+
+    public function onResolution(): static
+    {
+        $this->name = 'them';
+
+        return $this;
+    }
+};

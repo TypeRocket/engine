@@ -28,7 +28,7 @@ class Resolver
         }
         $constructor = $reflector->getConstructor();
         if ( ! $constructor ) {
-            return new $class;
+            return $this->onResolution(new $class);
         }
         $parameters   = $constructor->getParameters();
         $dependencies = $this->getDependencies($parameters, $args);
@@ -55,12 +55,12 @@ class Resolver
     /**
      * Resolve Callable
      *
-     * @param array|\Closure|string $handler
+     * @param callable $handler
      * @param null|array $args
      * @return mixed
      * @throws \ReflectionException
      */
-    public function resolveCallable(array|\Closure|string $handler, ?array $args = null)
+    public function resolveCallable(callable $handler, ?array $args = null): mixed
     {
         if ( is_array($handler) ) {
             $ref = new \ReflectionMethod($handler[0], $handler[1]);
