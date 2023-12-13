@@ -49,7 +49,20 @@ class Data
      */
     public static function mapDeep(callable $callback, mixed $value) : mixed
     {
-        return map_deep($value, $callback);
+        if ( is_array( $value ) ) {
+            foreach ( $value as $index => $item ) {
+                $value[ $index ] = static::mapDeep($callback, $item );
+            }
+        } elseif ( is_object( $value ) ) {
+            $object_vars = get_object_vars( $value );
+            foreach ( $object_vars as $property_name => $property_value ) {
+                $value->$property_name = static::mapDeep($callback, $property_value );
+            }
+        } else {
+            $value = $callback($value);
+        }
+
+        return $value;
     }
 
     /**

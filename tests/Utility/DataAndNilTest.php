@@ -630,4 +630,17 @@ class DataAndNilTest extends TestCase
         $v = Data::createMapIndexBy('name', $data);
         $this->assertTrue($v['kim'] === ['name' => 'kim']);
     }
+
+    public function testDataMapDeep()
+    {
+        $class = new stdClass();
+        $class->one = 'One';
+        $class->two = ['Two'];
+
+        $d = Data::mapDeep(fn($v) => mb_strtolower($v), ['One', 'Two']);
+        $this->assertTrue($d === ['one', 'two']);
+
+        $d = Data::mapDeep(fn($v) => mb_strtolower($v), $class);
+        $this->assertTrue($d->one === 'one' && $d->two[0] === 'two');
+    }
 }
