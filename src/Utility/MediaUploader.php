@@ -2,7 +2,7 @@
 
 namespace TypeRocket\Engine7\Utility;
 
-class Media
+class MediaUploader
 {
     /**
      * Upload a file to the media library using a URL.
