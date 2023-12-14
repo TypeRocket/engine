@@ -45,4 +45,4 @@ if(!function_exists('typerocket_engine7_register')) {
     });
 }
 
-typerocket_engine7_register('7.0.2', __DIR__);
+typerocket_engine7_register('7.0.3', __DIR__);
