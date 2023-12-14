@@ -1,4 +1,15 @@
 <?php
+/**
+ * @var string $typerocket_number latest version installed
+ * @var string $typerocket_directory latest version directory
+ * @var array $typerocket_autoload_map
+ */
+if(defined('TYPEROCKET_ENGINE7')) {
+   return;
+}
+
+define('TYPEROCKET_ENGINE7', $typerocket_number);
+
 class TypeRocketEngine7Autoloader {
     public static function autoloadPsr4(array &$map = [], $prepend = false)
     {

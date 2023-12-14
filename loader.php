@@ -23,7 +23,7 @@ if(!function_exists('typerocket_engine7_register')) {
             return explode(':', $v);
         }
 
-        $v = max($number, $version);
+        $v = version_compare($version, $number, '>') ? $version : $number;
 
         if($v === $version) {
             $v = $v.':'.$location;
@@ -45,4 +45,4 @@ if(!function_exists('typerocket_engine7_register')) {
     });
 }
 
-typerocket_engine7_register('7.0.0', __DIR__);
+typerocket_engine7_register('7.0.2', __DIR__);
