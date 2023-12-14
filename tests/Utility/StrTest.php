@@ -255,4 +255,47 @@ class StrTest extends TestCase
         $this->assertTrue( Str::makeWords('one-two', '-', true) === 'One Two');
     }
 
+    public function testDash(): void
+    {
+        // Test with uppercase strings
+        $input = "HelloWorld";
+        $expectedOutput = "hello-world";
+        $this->assertEquals($expectedOutput, Str::dash($input));
+
+        // Test with __ and uppercase strings
+        $input = "Hello__WorldThere";
+        $expectedOutput = "hello-world-there";
+        $this->assertEquals($expectedOutput, Str::dash($input));
+
+        // Test with _ strings
+        $input = "Hello_World_Today_";
+        $expectedOutput = "hello-world-today";
+        $this->assertEquals($expectedOutput, Str::dash($input));
+
+        // Test with single letters
+        $input = "h9W";
+        $expectedOutput = "h9-w";
+        $this->assertEquals($expectedOutput, Str::dash($input));
+
+        // Test with _ strings
+        $input = "hW";
+        $expectedOutput = "h-w";
+        $this->assertEquals($expectedOutput, Str::dash($input));
+
+        // Test with lowercase strings
+        $input = "hello";
+        $expectedOutput = "hello";
+        $this->assertEquals($expectedOutput, Str::dash($input));
+
+        // Test with numeric string
+        $input = "hello123";
+        $expectedOutput = "hello123";
+        $this->assertEquals($expectedOutput, Str::dash($input));
+
+        // Test with special characters
+        $input = "Hello!@#";
+        $expectedOutput = "hello";
+        $this->assertEquals($expectedOutput, Str::dash($input));
+    }
+
 }

@@ -155,12 +155,31 @@ class Str
      */
     public static function snake(?string $value): string
     {
-        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $value ?? '', $matches);
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+|[a-z])!', $value ?? '', $matches);
         $ret = $matches[0];
         foreach ($ret as &$match) {
-            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+            $match = strtolower($match);
         }
         return implode('_', $ret);
+    }
+
+    /**
+     * Dash
+     *
+     * @param string|null $value
+     *
+     * @return string
+     */
+    public static function dash(?string $value): string
+    {
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+|[a-z])!', $value ?? '', $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = strtolower($match);
+        }
+        return implode('-', $ret);
+
+        // return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $value));
     }
 
     /**
