@@ -39,5 +39,6 @@ class TypeRocketEngine7Autoloader {
 }
 
 TypeRocketEngine7Autoloader::autoloadPsr4($typerocket_autoload_map);
+\TypeRocket\Engine7\Core\Booter::init();
 
 do_action('typerocket_engine7_loaded');
