@@ -31,11 +31,12 @@ class Config
     private function jitLocate(string $dots, mixed $default = null) : mixed
     {
         [$root, $rest] = array_pad(explode('.', $dots, 2), 2, null);
+
         if(!isset($this->config[$root]) && is_file($this->directory . '/' . $root . '.php')) {
             $this->config[$root] = require( $this->directory . '/' . $root . '.php' );
         }
 
-        return $rest ? $this->config[$root] : Data::walk($rest, $this->config[$root], $default);
+        return $rest ? Data::walk($rest, $this->config[$root], $default) : $this->config[$root];
     }
 
     /**
@@ -48,9 +49,7 @@ class Config
      */
     public function get(string $dots, mixed $default = null) : mixed
     {
-        $value = Data::walk($dots, $this->config);
-
-        return $value ?? self::jitLocate($dots, $default);
+        return $this->jitLocate($dots, $default);
     }
 
     /**
