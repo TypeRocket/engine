@@ -38,6 +38,8 @@ class TypeRocketEngine7Autoloader {
     }
 }
 
+const TYPEROCKET_ENGINE7_PATH = __DIR__;
+const TYPEROCKET_ENGINE7_CONFIG_PATH = TYPEROCKET_ENGINE7_PATH . '/config';
 TypeRocketEngine7Autoloader::autoloadPsr4($typerocket_autoload_map);
 \TypeRocket\Engine7\Core\Booter::init();
 
