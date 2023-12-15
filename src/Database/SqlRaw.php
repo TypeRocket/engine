@@ -1,5 +1,4 @@
 <?php
-
 namespace TypeRocket\Engine7\Database;
 
 class SqlRaw
